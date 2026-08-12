@@ -6,31 +6,42 @@ This project implements an end-to-end **binary image classification pipeline** f
 
 A pretrained **DenseNet121** model was used as the backbone and adapted to classify chest X-ray images into two classes:
 
-* **NORMAL**
-* **PNEUMONIA**
+- **NORMAL**
+- **PNEUMONIA**
 
-The notebook covers the complete workflow, including dataset exploration, image preprocessing, data loading, transfer learning, model training, validation, evaluation, and final test-set inference.
+The notebook covers the complete workflow, including dataset exploration, image preprocessing, data preparation, transfer learning, model training, validation, evaluation, and final test-set inference using PyTorch.
 
-## Objective
+---
 
-The main objective is to develop and evaluate a deep learning model capable of distinguishing between **Normal** and **Pneumonia** chest X-ray images.
+# Objective
 
-Particular attention was given to evaluating the model using multiple classification metrics, especially **Precision, Recall, and F1-Score**, rather than relying on accuracy alone.
+The main objective of this project is to develop a deep learning model capable of distinguishing between **Normal** and **Pneumonia** chest X-ray images.
 
-## Project Workflow
+The model was evaluated using multiple classification metrics, including:
 
-The project follows the following pipeline:
+- Precision
+- Recall
+- F1-Score
+- Confusion Matrix
+
+rather than relying only on accuracy.
+
+---
+
+# Project Workflow
+
+The project follows a complete computer vision pipeline:
 
 1. Dataset exploration
 2. Image and label preparation
 3. Class distribution analysis
 4. Image visualization
 5. Image preprocessing and normalization
-6. Custom PyTorch Dataset
+6. Custom PyTorch Dataset implementation
 7. DataLoader preparation
 8. Handling class imbalance
 9. Transfer learning using DenseNet121
-10. Model architecture adaptation
+10. Model architecture modification
 11. Model training
 12. Learning-rate scheduling
 13. Early stopping
@@ -38,152 +49,203 @@ The project follows the following pipeline:
 15. Training and validation performance monitoring
 16. Classification report
 17. Confusion matrix analysis
-18. Test-set inference
-19. Final model evaluation
+18. Final test-set inference
+19. Model evaluation
 
-## Model
+---
 
-The project uses **DenseNet121** with pretrained ImageNet weights.
-
-Most of the pretrained layers are frozen, while the final classification layer is replaced with a new fully connected layer for binary classification.
-
-The training configuration includes:
-
-* Pretrained DenseNet121
-* Transfer Learning
-* Cross-Entropy Loss
-* Adam Optimizer
-* Learning Rate: `1e-4`
-* ReduceLROnPlateau Scheduler
-* Early Stopping
-* Best Model Checkpointing
-* CUDA support when available
-
-The best-performing model was saved during training and later loaded for final evaluation and inference.
-
-> **Note:** The trained model checkpoint is not included in this repository because its file size exceeds GitHub's standard file upload limit.
-
-## Dataset
+# Dataset
 
 The dataset contains chest X-ray images belonging to two classes:
 
-* **NORMAL**
-* **PNEUMONIA**
+- **NORMAL**
+- **PNEUMONIA**
 
-The notebook loads:
+The notebook uses:
 
-* **5,232 training images**
-* **624 test images**
+- **5,232 training images**
+- **624 test images**
 
 The test set contains:
 
-* **234 NORMAL images**
-* **390 PNEUMONIA images**
+- **234 NORMAL images**
+- **390 PNEUMONIA images**
 
-The dataset is loaded from the chest X-ray dataset available in the Kaggle environment used for this project.
+The dataset was obtained from a Kaggle chest X-ray dataset.
 
-> **Note:** The dataset itself is not included in this repository.
+The dataset itself is not included in this repository.
 
-## Training
+---
 
-The model was trained for a maximum of **70 epochs**, with **Early Stopping** configured with a patience of 3 epochs.
+# Data Leakage Prevention
 
-Training and validation performance were monitored using:
+Medical imaging datasets may contain multiple images from the same patient.
 
-* Training Loss
-* Validation Loss
-* Training Accuracy
-* Validation Accuracy
-* Validation Precision
-* Validation Recall
-* Validation F1-Score
+To ensure a realistic evaluation and prevent data leakage, patient-level splitting was applied during dataset preparation.
 
-### Best Validation Performance
+This prevents images from the same patient from appearing in both training and validation sets.
 
-* **Validation Accuracy:** 96.23%
-* **Validation Precision:** 99.36%
-* **Validation Recall:** 95.70%
-* **Validation F1-Score:** 97.50%
+As a result, validation performance better represents how the model performs on unseen patients.
 
-Early stopping was triggered after validation performance stopped improving.
+---
 
-## Test Set Results
+# Model
+
+The project uses:
+
+## DenseNet121
+
+DenseNet121 was selected as the CNN backbone using pretrained ImageNet weights.
+
+The pretrained network was adapted for binary classification by replacing the original classifier layer with a new fully connected layer.
+
+The training strategy included:
+
+- Transfer Learning
+- Partial fine-tuning
+- Cross-Entropy Loss
+- Adam Optimizer
+- Learning Rate: `1e-4`
+- ReduceLROnPlateau Scheduler
+- Early Stopping
+- Best Model Checkpointing
+- CUDA acceleration when available
+
+Initially, most pretrained layers were frozen. Selected deeper layers were enabled for training to allow the model to adapt better to chest X-ray features.
+
+---
+
+# Training
+
+The model was trained for a maximum of **70 epochs**.
+
+Early stopping was applied with a patience of 3 epochs to reduce overfitting and stop training when validation performance stopped improving.
+
+Training performance was monitored using:
+
+- Training Loss
+- Validation Loss
+- Training Accuracy
+- Validation Accuracy
+- Validation Precision
+- Validation Recall
+- Validation F1-Score
+
+The best-performing checkpoint based on validation performance was saved and later used for final evaluation.
+
+---
+
+# Best Validation Performance
+
+- **Validation Accuracy:** 96.23%
+- **Validation Precision:** 99.36%
+- **Validation Recall:** 95.70%
+- **Validation F1-Score:** 97.50%
+
+---
+
+# Test Set Evaluation
 
 The final model was evaluated on **624 unseen test images**.
 
-### Classification Report
+The test set was not used during training or model selection.
 
-| Class     | Precision | Recall | F1-Score | Support |
-| --------- | --------: | -----: | -------: | ------: |
-| NORMAL    |      0.98 |   0.90 |     0.94 |     234 |
-| PNEUMONIA |      0.94 |   0.99 |     0.96 |     390 |
+## Classification Report
 
-### Overall Metrics
+| Class | Precision | Recall | F1-Score | Support |
+|------|-----------|--------|----------|---------|
+| NORMAL | 0.98 | 0.90 | 0.94 | 234 |
+| PNEUMONIA | 0.94 | 0.99 | 0.96 | 390 |
 
-| Metric              |    Score |
-| ------------------- | -------: |
-| Accuracy            |  **95%** |
-| Macro F1-Score      | **0.95** |
-| Weighted F1-Score   | **0.95** |
+---
+
+## Overall Metrics
+
+| Metric | Score |
+|--------|-------|
+| Accuracy | **95%** |
+| Macro F1-Score | **0.95** |
+| Weighted F1-Score | **0.95** |
 | Pneumonia Precision | **0.94** |
-| Pneumonia Recall    | **0.99** |
-| Pneumonia F1-Score  | **0.96** |
+| Pneumonia Recall | **0.99** |
+| Pneumonia F1-Score | **0.96** |
 
-The model achieved a **99% recall for the PNEUMONIA class**, indicating that it successfully identified the vast majority of pneumonia cases in the test set.
+The model achieved a **99% recall for the PNEUMONIA class**, meaning it successfully detected the majority of pneumonia cases in the test set.
 
-## Model Evaluation
+---
 
-The model was evaluated using multiple classification metrics:
+# Model Evaluation
 
-* Accuracy
-* Precision
-* Recall
-* F1-Score
-* Classification Report
-* Confusion Matrix
+The model was evaluated using:
 
-Probability scores for the **PNEUMONIA** class were also extracted using Softmax, allowing the model's prediction confidence to be analyzed.
+- Accuracy
+- Precision
+- Recall
+- F1-Score
+- Classification Report
+- Confusion Matrix
 
-## Key Techniques
+Prediction probabilities were extracted using Softmax to analyze model confidence.
 
-### Transfer Learning
+---
 
-Instead of training a CNN completely from scratch, a pretrained DenseNet121 model was used as the feature extractor.
+# Key Techniques
 
-### Fine-Tuning
+## Transfer Learning
 
-The pretrained model layers were mostly frozen while the classification head was replaced for the two target classes.
+Instead of training a CNN from scratch, DenseNet121 pretrained on ImageNet was used as a feature extractor.
 
-A selected deeper feature layer was also enabled for training.
+This helps achieve better performance with medical image datasets.
 
-### Learning Rate Scheduling
+---
 
-`ReduceLROnPlateau` was used to reduce the learning rate when the validation loss stopped improving.
+## Fine-Tuning
 
-### Early Stopping
+The pretrained model was adapted by:
 
-Early stopping was used to terminate training when validation performance failed to improve for several consecutive epochs.
+- Replacing the final classification layer
+- Freezing most pretrained layers
+- Training selected deeper layers to improve adaptation to chest X-ray features
 
-### Model Checkpointing
+---
 
-The best model based on validation loss was saved during training and later used for final evaluation.
+## Learning Rate Scheduling
 
-## Technologies
+`ReduceLROnPlateau` was used to automatically reduce the learning rate when validation loss stopped improving.
 
-* Python
-* PyTorch
-* Torchvision
-* NumPy
-* Pandas
-* OpenCV
-* Pillow
-* Matplotlib
-* Scikit-learn
+---
 
-## Project Structure
+## Early Stopping
 
-```text
+Early stopping was applied to prevent unnecessary training and reduce overfitting.
+
+---
+
+## Model Checkpointing
+
+The best model checkpoint was saved during training and used for final test evaluation.
+
+---
+
+# Technologies
+
+- Python
+- PyTorch
+- Torchvision
+- NumPy
+- Pandas
+- OpenCV
+- Pillow
+- Matplotlib
+- Scikit-learn
+
+---
+
+# Project Structure
+
+```
 pneumonia-detection-using-densenet121/
+
 │
 ├── README.md
 ├── requirements.txt
@@ -192,57 +254,82 @@ pneumonia-detection-using-densenet121/
     └── pneumonia-detection-using-densenet121.ipynb
 ```
 
-## How to Run
+---
 
-### 1. Clone the repository
+# How to Run
+
+## 1. Clone the repository
 
 ```bash
 git clone https://github.com/Ayakhedr/pneumonia-detection-using-densenet121.git
+
 cd pneumonia-detection-using-densenet121
 ```
 
-### 2. Install the required dependencies
+---
+
+## 2. Install dependencies
 
 ```bash
 pip install -r requirements.txt
 ```
 
-### 3. Open the notebook
+---
+
+## 3. Run the notebook
 
 Open:
 
-```text
+```
 notebooks/pneumonia-detection-using-densenet121.ipynb
 ```
 
-Run the notebook cells sequentially to reproduce the project workflow.
+Run the notebook cells sequentially.
 
-> **Note:** The notebook was developed in a Kaggle environment and uses the corresponding Kaggle dataset path. The dataset itself is not included in this repository.
+---
 
-## Key Takeaways
+# Model Weights
+
+The trained DenseNet121 model checkpoint is not included in this repository because the file size exceeds GitHub's standard upload limitations.
+
+The complete training pipeline is available in the notebook, and the model can be reproduced by running the training process.
+
+---
+
+# Limitations
+
+- The dataset may not represent all real-world clinical environments.
+- Model performance may vary when applied to external hospital datasets.
+- The model is developed for research and educational purposes and should not be considered a clinical diagnostic tool.
+
+---
+
+# Key Takeaways
 
 This project demonstrates practical experience with:
 
-* Deep Learning
-* Medical Image Classification
-* Convolutional Neural Networks
-* Transfer Learning
-* DenseNet121
-* PyTorch
-* Torchvision
-* Image preprocessing
-* Custom Dataset and DataLoader
-* Class imbalance handling
-* Model fine-tuning
-* Learning-rate scheduling
-* Early stopping
-* Model checkpointing
-* Classification metrics
-* Confusion matrix analysis
-* Test-set inference
+- Deep Learning
+- Medical Image Classification
+- Convolutional Neural Networks
+- Transfer Learning
+- DenseNet121
+- PyTorch
+- Torchvision
+- Image preprocessing
+- Custom Dataset and DataLoader
+- Class imbalance handling
+- Model fine-tuning
+- Learning-rate scheduling
+- Early stopping
+- Model checkpointing
+- Classification metrics
+- Confusion matrix analysis
+- Test-set evaluation
 
-## Disclaimer
+---
+
+# Disclaimer
 
 This project is intended for **educational and research purposes only**.
 
-It is not intended for clinical diagnosis or to replace professional medical judgment.
+It is not intended to replace professional medical diagnosis or clinical decision-making.
