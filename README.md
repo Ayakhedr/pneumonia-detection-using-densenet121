@@ -6,8 +6,8 @@ This project implements an end-to-end **binary image classification pipeline** f
 
 A pretrained **DenseNet121** model was used as the backbone and adapted to classify chest X-ray images into two classes:
 
-- **NORMAL**
-- **PNEUMONIA**
+* **NORMAL**
+* **PNEUMONIA**
 
 The notebook covers the complete workflow, including dataset exploration, image preprocessing, data loading, transfer learning, model training, validation, evaluation, and final test-set inference.
 
@@ -15,7 +15,7 @@ The notebook covers the complete workflow, including dataset exploration, image 
 
 The main objective is to develop and evaluate a deep learning model capable of distinguishing between **Normal** and **Pneumonia** chest X-ray images.
 
-Particular attention was given to model evaluation using multiple metrics, especially **Recall and F1-Score**, rather than relying on accuracy alone.
+Particular attention was given to evaluating the model using multiple classification metrics, especially **Precision, Recall, and F1-Score**, rather than relying on accuracy alone.
 
 ## Project Workflow
 
@@ -49,40 +49,40 @@ Most of the pretrained layers are frozen, while the final classification layer i
 
 The training configuration includes:
 
-- Pretrained DenseNet121
-- Transfer Learning
-- Cross-Entropy Loss
-- Adam Optimizer
-- Learning Rate: `1e-4`
-- ReduceLROnPlateau Scheduler
-- Early Stopping
-- Best Model Checkpointing
-- CUDA support when available
+* Pretrained DenseNet121
+* Transfer Learning
+* Cross-Entropy Loss
+* Adam Optimizer
+* Learning Rate: `1e-4`
+* ReduceLROnPlateau Scheduler
+* Early Stopping
+* Best Model Checkpointing
+* CUDA support when available
 
-The best-performing model is saved during training as:
+The best-performing model was saved during training and later loaded for final evaluation and inference.
 
-```text
-best_Dens121_model.pth
-```
+> **Note:** The trained model checkpoint is not included in this repository because its file size exceeds GitHub's standard file upload limit.
 
 ## Dataset
 
 The dataset contains chest X-ray images belonging to two classes:
 
-- **NORMAL**
-- **PNEUMONIA**
+* **NORMAL**
+* **PNEUMONIA**
 
 The notebook loads:
 
-- **5,232 training images**
-- **624 test images**
+* **5,232 training images**
+* **624 test images**
 
 The test set contains:
 
-- **234 NORMAL images**
-- **390 PNEUMONIA images**
+* **234 NORMAL images**
+* **390 PNEUMONIA images**
 
 The dataset is loaded from the chest X-ray dataset available in the Kaggle environment used for this project.
+
+> **Note:** The dataset itself is not included in this repository.
 
 ## Training
 
@@ -90,20 +90,20 @@ The model was trained for a maximum of **70 epochs**, with **Early Stopping** co
 
 Training and validation performance were monitored using:
 
-- Training Loss
-- Validation Loss
-- Training Accuracy
-- Validation Accuracy
-- Validation Precision
-- Validation Recall
-- Validation F1-Score
+* Training Loss
+* Validation Loss
+* Training Accuracy
+* Validation Accuracy
+* Validation Precision
+* Validation Recall
+* Validation F1-Score
 
-The best validation performance observed during training reached:
+### Best Validation Performance
 
-- **Validation Accuracy:** 96.23%
-- **Validation Precision:** 99.36%
-- **Validation Recall:** 95.70%
-- **Validation F1-Score:** 97.50%
+* **Validation Accuracy:** 96.23%
+* **Validation Precision:** 99.36%
+* **Validation Recall:** 95.70%
+* **Validation F1-Score:** 97.50%
 
 Early stopping was triggered after validation performance stopped improving.
 
@@ -111,39 +111,38 @@ Early stopping was triggered after validation performance stopped improving.
 
 The final model was evaluated on **624 unseen test images**.
 
-### Classification Performance
+### Classification Report
 
-| Class | Precision | Recall | F1-Score | Support |
-|---|---:|---:|---:|---:|
-| NORMAL | 0.98 | 0.90 | 0.94 | 234 |
-| PNEUMONIA | 0.94 | 0.99 | 0.96 | 390 |
-| **Overall Accuracy** | | | **0.95** | **624** |
+| Class     | Precision | Recall | F1-Score | Support |
+| --------- | --------: | -----: | -------: | ------: |
+| NORMAL    |      0.98 |   0.90 |     0.94 |     234 |
+| PNEUMONIA |      0.94 |   0.99 |     0.96 |     390 |
 
 ### Overall Metrics
 
-| Metric | Score |
-|---|---:|
-| Accuracy | **95%** |
-| Macro F1-Score | **0.95** |
-| Weighted F1-Score | **0.95** |
+| Metric              |    Score |
+| ------------------- | -------: |
+| Accuracy            |  **95%** |
+| Macro F1-Score      | **0.95** |
+| Weighted F1-Score   | **0.95** |
 | Pneumonia Precision | **0.94** |
-| Pneumonia Recall | **0.99** |
-| Pneumonia F1-Score | **0.96** |
+| Pneumonia Recall    | **0.99** |
+| Pneumonia F1-Score  | **0.96** |
 
-The high **Pneumonia Recall of 99%** indicates that the model successfully identifies the vast majority of pneumonia cases in the test set.
+The model achieved a **99% recall for the PNEUMONIA class**, indicating that it successfully identified the vast majority of pneumonia cases in the test set.
 
 ## Model Evaluation
 
 The model was evaluated using multiple classification metrics:
 
-- Accuracy
-- Precision
-- Recall
-- F1-Score
-- Classification Report
-- Confusion Matrix
+* Accuracy
+* Precision
+* Recall
+* F1-Score
+* Classification Report
+* Confusion Matrix
 
-Probability scores for the **PNEUMONIA** class were also extracted using Softmax, allowing the model's confidence in the pneumonia prediction to be analyzed.
+Probability scores for the **PNEUMONIA** class were also extracted using Softmax, allowing the model's prediction confidence to be analyzed.
 
 ## Key Techniques
 
@@ -163,7 +162,7 @@ A selected deeper feature layer was also enabled for training.
 
 ### Early Stopping
 
-Early stopping was used to terminate training when validation loss failed to improve for several consecutive epochs.
+Early stopping was used to terminate training when validation performance failed to improve for several consecutive epochs.
 
 ### Model Checkpointing
 
@@ -171,15 +170,15 @@ The best model based on validation loss was saved during training and later used
 
 ## Technologies
 
-- Python
-- PyTorch
-- Torchvision
-- NumPy
-- Pandas
-- OpenCV
-- Pillow
-- Matplotlib
-- Scikit-learn
+* Python
+* PyTorch
+* Torchvision
+* NumPy
+* Pandas
+* OpenCV
+* Pillow
+* Matplotlib
+* Scikit-learn
 
 ## Project Structure
 
@@ -189,11 +188,8 @@ pneumonia-detection-using-densenet121/
 ├── README.md
 ├── requirements.txt
 │
-├── notebooks/
-│   └── pneumonia-detection-using-densenet121.ipynb
-│
-└── models/
-    └── best_Dens121_model.pth
+└── notebooks/
+    └── pneumonia-detection-using-densenet121.ipynb
 ```
 
 ## How to Run
@@ -227,26 +223,26 @@ Run the notebook cells sequentially to reproduce the project workflow.
 
 This project demonstrates practical experience with:
 
-- Deep Learning
-- Medical Image Classification
-- Convolutional Neural Networks
-- Transfer Learning
-- DenseNet121
-- PyTorch
-- Torchvision
-- Image preprocessing
-- Custom Dataset and DataLoader
-- Class imbalance handling
-- Model fine-tuning
-- Learning-rate scheduling
-- Early stopping
-- Model checkpointing
-- Classification metrics
-- Confusion matrix analysis
-- Test-set inference
+* Deep Learning
+* Medical Image Classification
+* Convolutional Neural Networks
+* Transfer Learning
+* DenseNet121
+* PyTorch
+* Torchvision
+* Image preprocessing
+* Custom Dataset and DataLoader
+* Class imbalance handling
+* Model fine-tuning
+* Learning-rate scheduling
+* Early stopping
+* Model checkpointing
+* Classification metrics
+* Confusion matrix analysis
+* Test-set inference
 
-##  Disclaimer
+## Disclaimer
 
 This project is intended for **educational and research purposes only**.
 
-The model should not be used as a substitute for professional medical diagnosis or clinical decision-making.
+It is not intended for clinical diagnosis or to replace professional medical judgment.
